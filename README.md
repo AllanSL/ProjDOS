@@ -92,9 +92,9 @@ Todas as rotas são protegidas com `@login_required`. O acesso ao sistema exige 
 
 ## 👨‍💻 Desenvolvido por
 
-Allan Batista
-Luan da Silva
-Samylla Marinho
+- Allan Batista
+- Luan da Silva
+- Samylla Marinho
 
 5º Período – Curso de Análise e Desenvolvimento de Sistemas  
 Instituto Federal do Tocantins – Campus Araguaína

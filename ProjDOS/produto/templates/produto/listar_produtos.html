@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Listar Produtos{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4">Lista de Produtos</h2>
+
+  <table class="table table-hover table-striped" id="productTable">
+    <thead class="table-dark">
+      <tr>
+        <th>Nome</th>
+        <th>SKU</th>
+        <th>Marca</th>
+        <th>Preço</th>
+        <th>Quantidade</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for produto in produtos %}
+        <tr>
+          <td>{{ produto.nome }}</td>
+          <td>{{ produto.sku }}</td>
+          <td>{{ produto.marca }}</td>
+          <td>R$ {{ produto.preco }}</td>
+          <td>{{ produto.saldo_estoque }}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ produto.id }}">Detalhar</button>
+            <a href="{% url 'editar_produto' produto.id %}" class="btn btn-warning btn-sm">Editar</a>
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalExcluir{{ produto.id }}">Excluir</button>
+          </td>
+        </tr>
+
+        <!-- Modal de Detalhamento -->
+        <div class="modal fade" id="modal{{ produto.id }}" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">{{ produto.nome }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <p><strong>Descrição:</strong> {{ produto.descricao }}</p>
+                <p><strong>Marca:</strong> {{ produto.marca }}</p>
+                <p><strong>Preço:</strong> R$ {{ produto.preco }}</p>
+                <p><strong>Estoque:</strong> {{ produto.saldo_estoque }}</p>
+                <p><strong>SKU:</strong> {{ produto.sku }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal de Confirmação de Exclusão -->
+        <div class="modal fade" id="modalExcluir{{ produto.id }}" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Excluir Produto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                Tem certeza que deseja excluir <strong>{{ produto.nome }}</strong>?
+              </div>
+              <div class="modal-footer">
+                <form method="POST" action="{% url 'excluir_produto' produto.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">Sim, excluir</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#productTable').DataTable({
+        language: {
+          url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+        },
+        pageLength: 10
+      });
+    });
+  </script>
+{% endblock %}

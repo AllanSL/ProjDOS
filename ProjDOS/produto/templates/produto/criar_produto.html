@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Cadastrar Produto{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Cadastrar Novo Produto</h2>
+  <form method="POST" action="{% url 'criar_produto' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="nome" class="form-label">Nome</label>
+      <input type="text" class="form-control" id="nome" name="nome" required />
+    </div>
+    <div class="mb-3">
+      <label for="descricao" class="form-label">Descrição</label>
+      <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="marca" class="form-label">Marca</label>
+      <input type="text" class="form-control" id="marca" name="marca" maxlength="16" required/>
+    </div>
+    <div class="mb-3">
+      <label for="preco" class="form-label">Preço</label>
+      <input type="number" step="0.01" class="form-control" id="preco" name="preco" required min="0"/>
+    </div>
+    <div class="mb-3">
+      <label for="saldo_estoque" class="form-label">Quantidade em estoque</label>
+      <input type="number" class="form-control" id="saldo_estoque" name="saldo_estoque" required min="0"/>
+    </div>
+    <button type="submit" class="btn btn-success">Cadastrar</button>
+    <a href="{% url 'listar_produtos' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

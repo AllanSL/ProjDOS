@@ -1,14 +1,15 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 from .models import Produto
 from django.contrib import messages
 
-@login_required
+@login_required(login_url=reverse_lazy('login'))
 def listar_produtos(request):
     produtos = Produto.objects.all()
     return render(request, 'produto/listar_produtos.html', {'produtos': produtos})
 
-@login_required
+@login_required(login_url=reverse_lazy('login'))
 def editar_produto(request, produto_id):
     produto = get_object_or_404(Produto, id=produto_id)
 
@@ -26,7 +27,7 @@ def editar_produto(request, produto_id):
 
     return render(request, 'produto/editar_produto.html', {'produto': produto})
 
-@login_required
+@login_required(login_url=reverse_lazy('login'))
 def excluir_produto(request, produto_id):
     produto = get_object_or_404(Produto, id=produto_id)
     if request.method == 'POST':
@@ -34,7 +35,7 @@ def excluir_produto(request, produto_id):
         messages.success(request, 'Produto excluído com sucesso!')
         return redirect('listar_produtos')
 
-@login_required
+@login_required(login_url=reverse_lazy('login'))
 def criar_produto(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')

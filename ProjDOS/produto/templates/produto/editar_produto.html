@@ -9,7 +9,7 @@
     {% csrf_token %}
     <div class="mb-3">
       <label for="nome" class="form-label">Nome</label>
-      <input type="text" class="form-control" id="nome" name="nome" value="{{ produto.nome }}" required />
+      <input type="text" class="form-control" id="nome" name="nome" value="{{ produto.nome }}" disabled />
     </div>
     <div class="mb-3">
       <label for="descricao" class="form-label">Descrição</label>
@@ -17,7 +17,7 @@
     </div>
     <div class="mb-3">
       <label for="marca" class="form-label">Marca</label>
-      <input type="text" class="form-control" id="marca" name="marca" value="{{ produto.marca }}" />
+      <input type="text" class="form-control" id="marca" name="marca" value="{{ produto.marca }}" disabled />
     </div>
     <div class="mb-3">
       <label for="preco" class="form-label">Preço</label>

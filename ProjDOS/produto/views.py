@@ -3,12 +3,17 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from .models import Produto
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+
+def is_superuser(user):
+    return user.is_superuser
 
 @login_required(login_url=reverse_lazy('login'))
 def listar_produtos(request):
     produtos = Produto.objects.all()
     return render(request, 'produto/listar_produtos.html', {'produtos': produtos})
 
+@user_passes_test(is_superuser, login_url=reverse_lazy('listar_produtos'))
 @login_required(login_url=reverse_lazy('login'))
 def editar_produto(request, produto_id):
     produto = get_object_or_404(Produto, id=produto_id)
@@ -27,6 +32,7 @@ def editar_produto(request, produto_id):
 
     return render(request, 'produto/editar_produto.html', {'produto': produto})
 
+@user_passes_test(is_superuser, login_url=reverse_lazy('listar_produtos'))
 @login_required(login_url=reverse_lazy('login'))
 def excluir_produto(request, produto_id):
     produto = get_object_or_404(Produto, id=produto_id)
@@ -35,6 +41,7 @@ def excluir_produto(request, produto_id):
         messages.success(request, 'Produto excluído com sucesso!')
         return redirect('listar_produtos')
 
+@user_passes_test(is_superuser, login_url=reverse_lazy('listar_produtos'))
 @login_required(login_url=reverse_lazy('login'))
 def criar_produto(request):
     if request.method == 'POST':

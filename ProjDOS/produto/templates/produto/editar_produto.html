@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}Editar Produto{% endblock %}
+{% block title %}
+  Editar Produto
+{% endblock %}
 
 {% block content %}
   <h2>Editar Produto</h2>
@@ -21,11 +23,11 @@
     </div>
     <div class="mb-3">
       <label for="preco" class="form-label">Preço</label>
-      <input type="number" step="0.01" class="form-control" id="preco" name="preco" value="{{ produto.preco }}" required min="0" />
+      <input type="text" class="form-control" id="preco" name="preco" value="{{ produto.preco }}" required oninput="formatarMoeda(this)" />
     </div>
     <div class="mb-3">
       <label for="saldo_estoque" class="form-label">Quantidade em estoque</label>
-      <input type="number" class="form-control" id="saldo_estoque" name="saldo_estoque" value="{{ produto.saldo_estoque }}" required min="0" />
+      <input type="number" class="form-control" id="saldo_estoque" name="saldo_estoque" value="{{ produto.saldo_estoque }}" required min="0" oninput="verificarQuantidade(this)" />
     </div>
     <div class="mb-3">
       <label for="sku" class="form-label">SKU</label>
@@ -45,9 +47,7 @@
           <h5 class="modal-title" id="confirmSaveModalLabel">Confirmar Alterações</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
-        <div class="modal-body">
-          Tem certeza que deseja salvar as alterações deste produto?
-        </div>
+        <div class="modal-body">Tem certeza que deseja salvar as alterações deste produto?</div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="button" class="btn btn-primary" id="confirmSaveBtn">Sim, Salvar</button>
@@ -73,24 +73,86 @@
       </div>
     </div>
   </div>
-
 {% endblock %}
 
 {% block extra_scripts %}
   <script>
     document.getElementById('confirmSaveBtn').addEventListener('click', function () {
-      // Verifica se o preço e o saldo de estoque são válidos
-      const preco = document.getElementById('preco').value;
-      const saldoEstoque = document.getElementById('saldo_estoque').value;
-
+      // Obtém os valores dos campos
+      const preco = parseFloat(document.getElementById('preco').value.replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0
+      const saldoEstoque = parseInt(document.getElementById('saldo_estoque').value.trim()) || 0
+    
+      // Verifica se os valores são negativos
       if (preco < 0 || saldoEstoque < 0) {
         // Exibe o modal de erro se os valores forem negativos
-        $('#errorModal').modal('show');
-        return;
+        document.querySelector('#errorModal .modal-body').innerText = 'O preço e/ou quantidade em estoque não podem ser negativos!'
+        $('#errorModal').modal('show')
+        return
       }
-
+    
       // Se estiver tudo certo, submete o formulário
-      document.getElementById('editForm').submit();
-    });
+      document.getElementById('editForm').submit()
+    })
+    
+    document.getElementById('editForm').addEventListener('submit', function (event) {
+      const preco = parseFloat(document.getElementById('preco').value.replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0
+      const saldoEstoque = parseInt(document.getElementById('saldo_estoque').value.trim()) || 0
+    
+      if (preco <= 0) {
+        alert('O preço não pode ser vazio ou menor que zero.')
+        event.preventDefault() // Impede o envio do formulário
+      }
+    
+      if (saldoEstoque < 0) {
+        alert('A quantidade em estoque não pode ser vazia ou negativa.')
+        event.preventDefault() // Impede o envio do formulário
+      }
+    })
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const precoCampo = document.getElementById('preco')
+      const saldoEstoqueCampo = document.getElementById('saldo_estoque')
+    
+      // Formata o valor inicial do campo de preço
+      if (precoCampo && precoCampo.value) {
+        formatarMoeda(precoCampo)
+      }
+    
+      // Define o valor inicial do campo de quantidade em estoque
+      if (saldoEstoqueCampo && !saldoEstoqueCampo.value) {
+        saldoEstoqueCampo.value = 0
+      }
+    })
+    
+    function formatarMoeda(campo) {
+      let valor = campo.value
+    
+      // Remove qualquer caractere que não seja número
+      valor = valor.replace(/\D/g, '')
+    
+      // Se o campo estiver vazio, assume o valor 0
+      if (!valor) {
+        campo.value = 'R$0,00'
+        return
+      }
+    
+      // Converte para número e formata como moeda
+      valor = (parseFloat(valor) / 100).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      })
+    
+      // Atualiza o campo com o valor formatado
+      campo.value = valor
+    }
+    
+    function verificarQuantidade(campo) {
+      // Se o campo estiver vazio, assume o valor 0
+      if (!campo.value) {
+        campo.value = 0
+      }
+    }
   </script>
 {% endblock %}

@@ -69,29 +69,30 @@ def excluir_produto(request, produto_id):
 def criar_produto(request):
     if request.method == 'POST':
         try:
-            # Remove a formatação monetária do campo 'preco'
-            preco = request.POST.get('preco', '').replace("R$", "").replace(".", "").replace(",", ".").strip()
-            saldo_estoque = request.POST.get('saldo_estoque', '').strip()
+            preco_raw = request.POST.get('preco', '')
+            saldo_estoque_raw = request.POST.get('saldo_estoque', '')
 
-            # Validações adicionais
-            if not preco or float(preco) < 0:
-                messages.error(request, 'O preço não pode ser vazio ou menor que zero.')
+            if not preco_raw or not saldo_estoque_raw:
+                messages.error(request, 'Preencha todos os campos obrigatórios.')
                 return render(request, 'produto/criar_produto.html')
 
-            if not saldo_estoque or int(saldo_estoque) < 0:
-                messages.error(request, 'A quantidade em estoque não pode ser vazia ou negativa.')
-                return render(request, 'produto/criar_produto.html')
+            preco = Decimal(preco_raw.replace("R$", "").replace(".", "").replace(",", ".").strip()).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+            saldo_estoque = int(saldo_estoque_raw.strip())
 
-            # Criação do produto
-            Produto.objects.create(
-                nome=request.POST.get('nome', '').strip(),
-                descricao=request.POST.get('descricao', '').strip(),
-                marca=request.POST.get('marca', '').strip(),
-                preco=float(preco),
-                saldo_estoque=int(saldo_estoque),
-            )
-            messages.success(request, 'Produto criado com sucesso!')
-            return redirect('listar_produtos')
+            try:
+                Produto.objects.create(
+                    nome=request.POST.get('nome', '').strip(),
+                    descricao=request.POST.get('descricao', '').strip(),
+                    marca=request.POST.get('marca', '').strip(),
+                    preco=preco,
+                    saldo_estoque=saldo_estoque,
+                )
+                messages.success(request, 'Produto criado com sucesso!')
+                return redirect('listar_produtos')
+            except ValidationError as e:
+                for field, errors in e.message_dict.items():
+                    for error in errors:
+                        messages.error(request, f"{field}: {error}")
         except ValueError:
             messages.error(request, 'Erro ao processar os valores. Verifique os campos preenchidos.')
 

@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Define o valor inicial do campo de quantidade em estoque
     if (saldoEstoqueCampo && !saldoEstoqueCampo.value) {
         saldoEstoqueCampo.value = 0;
+    } else if (saldoEstoqueCampo) {
+        verificarQuantidade(saldoEstoqueCampo); // Garante valor correto ao carregar
     }
 
     const confirmBtn = document.getElementById('confirmSaveBtn');
@@ -50,10 +52,8 @@ function formatarMoeda(campo) {
 }
 
 function verificarQuantidade(campo) {
-    if (parseInt(campo.value) > 99999) {
-        campo.value = 99999;
-    }
-    if (!campo.value) {
-        campo.value = 0;
-    }
+    let valor = parseInt(campo.value.replace(/\D/g, '')) || 0;
+    if (valor > 99999) valor = 99999;
+    if (valor < 0) valor = 0;
+    campo.value = valor;
 }

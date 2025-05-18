@@ -52,8 +52,11 @@ function formatarMoeda(campo) {
 }
 
 function verificarQuantidade(campo) {
-    let valor = parseInt(campo.value.replace(/\D/g, '')) || 0;
-    if (valor > 99999) valor = 99999;
-    if (valor < 0) valor = 0;
-    campo.value = valor;
+    // Remove tudo que não for dígito
+    let valor = campo.value.replace(/\D/g, '');
+    if (valor === '') valor = '0';
+    let inteiro = parseInt(valor, 10);
+    if (inteiro > 99999) inteiro = 99999;
+    if (inteiro < 0) inteiro = 0;
+    campo.value = inteiro;
 }

@@ -30,7 +30,7 @@
     <div class="mb-3">
       <label for="saldo_estoque" class="form-label">Quantidade em estoque</label>
       <!-- Quantidade em estoque: mínimo 0, máximo 99999 (exemplo) -->
-      <input type="number" class="form-control" id="saldo_estoque" name="saldo_estoque" value="{{ produto.saldo_estoque }}" required min="0" max="99999" oninput="verificarQuantidade(this)" />
+      <input type="number" class="form-control" id="saldo_estoque" name="saldo_estoque" value="{{ produto.saldo_estoque }}" required min="0" max="99999" step="1" inputmode="numeric" oninput="verificarQuantidade(this)" />
     </div>
     <div class="mb-3">
       <label for="sku" class="form-label">SKU</label>

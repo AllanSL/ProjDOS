@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ValidationError
 from decimal import Decimal, ROUND_DOWN
+from django.contrib.auth.views import LoginView
 
 def is_superuser(user):
     return user.is_superuser
@@ -97,3 +98,9 @@ def criar_produto(request):
             messages.error(request, 'Erro ao processar os valores. Verifique os campos preenchidos.')
 
     return render(request, 'produto/criar_produto.html')
+
+class CustomLoginView(LoginView):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('listar_produtos')  # ou a URL que desejar
+        return super().dispatch(request, *args, **kwargs)

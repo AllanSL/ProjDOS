@@ -7,6 +7,13 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ValidationError
 from decimal import Decimal, ROUND_DOWN
 from django.contrib.auth.views import LoginView
+from rest_framework import viewsets
+from .serializers import ProdutoSerializer
+
+
+class ProdutoViewSet(viewsets.ModelViewSet):
+    queryset = Produto.objects.all()
+    serializer_class = ProdutoSerializer
 
 def is_superuser(user):
     return user.is_superuser
